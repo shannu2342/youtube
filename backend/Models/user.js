@@ -103,6 +103,18 @@ const UserData = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  premiumSubscriptionId: {
+    type: String,
+    default: null,
+  },
+  premiumPlanId: {
+    type: String,
+    default: null,
+  },
+  premiumSubscriptionStatus: {
+    type: String,
+    default: null,
+  },
   // Razorpay customer ID for payouts
   razorpayCustomerId: {
     type: String,

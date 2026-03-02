@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import {
   getPremiumStatus,
-  createPremiumOrder,
-  verifyPremiumPayment,
+  createPremiumSubscription,
+  verifyPremiumSubscription,
   getRazorpayConfig,
   getPremiumPlans,
 } from "../api/monetization";
@@ -141,16 +141,14 @@ function PremiumSubscription({ onClose }) {
 
     setLoading(true);
     try {
-      const orderResponse = await createPremiumOrder(selectedPlan.id);
+      const subscriptionResponse = await createPremiumSubscription(selectedPlan.id);
       await loadRazorpayScript();
 
       const razorpay = new window.Razorpay({
         key: keyToUse,
-        amount: orderResponse.amount,
-        currency: orderResponse.currency,
+        subscription_id: subscriptionResponse.subscriptionId,
         name: "YouTube Clone Premium",
-        description: `${selectedPlan.name} Plan`,
-        order_id: orderResponse.orderId,
+        description: `${selectedPlan.name} Auto-Renewing Plan`,
         prefill: {
           name: user?.name || "",
           email: user?.email || "",
@@ -160,8 +158,8 @@ function PremiumSubscription({ onClose }) {
         },
         handler: async (response) => {
           try {
-            await verifyPremiumPayment(
-              orderResponse.orderId,
+            await verifyPremiumSubscription(
+              response.razorpay_subscription_id,
               response.razorpay_payment_id,
               response.razorpay_signature,
               selectedPlan.id
@@ -278,7 +276,7 @@ function PremiumSubscription({ onClose }) {
             </div>
 
             <div className="premium-payment-options">
-              <p>Pay using UPI, Cards, Netbanking, or Wallets.</p>
+              <p>Auto-renewing subscription. Pay using UPI, Cards, Netbanking, or Wallets.</p>
             </div>
 
             <button

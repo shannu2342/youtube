@@ -249,7 +249,7 @@ function Browse() {
             <div
               className="video-section"
               style={{
-                marginLeft: menuClicked ? "40px" : "40px",
+                marginLeft: menuClicked ? "0px" : "0px",
               }}
             >
               <div className="uploaded-videos">
@@ -335,7 +335,7 @@ function Browse() {
           <div
             className="video-section"
             style={{
-              marginLeft: menuClicked ? "40px" : "40px",
+              marginLeft: menuClicked ? "0px" : "0px",
             }}
           >
             <div

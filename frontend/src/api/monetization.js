@@ -146,27 +146,27 @@ export const updateBankDetails = async (bankDetails) => {
 // ============================================================================
 
 /**
- * Create Razorpay order for premium subscription
+ * Create Razorpay subscription for premium membership
  */
-export const createPremiumOrder = async (planId) => {
-  return apiCall("/create-premium-order", {
+export const createPremiumSubscription = async (planId) => {
+  return apiCall("/create-premium-subscription", {
     method: "POST",
     body: JSON.stringify({ planId }),
   });
 };
 
 /**
- * Verify and activate premium subscription
+ * Verify and activate recurring premium subscription
  */
-export const verifyPremiumPayment = async (
-  razorpayOrderId,
+export const verifyPremiumSubscription = async (
+  razorpaySubscriptionId,
   razorpayPaymentId,
   razorpaySignature,
   planId
 ) => {
-  return apiCall("/verify-premium-payment", {
+  return apiCall("/verify-premium-subscription", {
     method: "POST",
-    body: JSON.stringify({ razorpayOrderId, razorpayPaymentId, razorpaySignature, planId }),
+    body: JSON.stringify({ razorpaySubscriptionId, razorpayPaymentId, razorpaySignature, planId }),
   });
 };
 

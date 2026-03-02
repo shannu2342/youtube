@@ -85,9 +85,103 @@ const PREMIUM_PLANS = [
 ];
 
 const DEFAULT_PREMIUM_PLAN_ID = "monthly";
+const PREMIUM_PLAN_INTERVAL_MONTHS = {
+  monthly: 1,
+  quarterly: 3,
+  yearly: 12,
+};
+const PREMIUM_SYNCABLE_STATUSES = ["active", "authenticated", "pending", "halted", "cancelled"];
+const ENV_PLAN_ID_BY_PLAN = {
+  monthly: process.env.RAZORPAY_PLAN_ID_MONTHLY,
+  quarterly: process.env.RAZORPAY_PLAN_ID_QUARTERLY,
+  yearly: process.env.RAZORPAY_PLAN_ID_YEARLY,
+};
+const runtimePlanIdCache = {};
 
 const getPremiumPlan = (planId = DEFAULT_PREMIUM_PLAN_ID) =>
   PREMIUM_PLANS.find((plan) => plan.id === planId);
+
+const createPremiumReceipt = (userId) => {
+  // Razorpay receipt max length is 40 chars.
+  // Keep it short while preserving traceability.
+  const userSuffix = String(userId).slice(-8);
+  const timePart = Date.now().toString(36);
+  return `prem_${userSuffix}_${timePart}`;
+};
+
+const createPremiumPlanReference = (planId) => {
+  const timePart = Date.now().toString(36);
+  return `pl_${planId}_${timePart}`;
+};
+
+const isPremiumAccessActive = (subscriptionStatus, premiumExpiryDate) => {
+  if (!premiumExpiryDate || Number.isNaN(new Date(premiumExpiryDate).getTime())) {
+    return false;
+  }
+  const now = new Date();
+  const expiry = new Date(premiumExpiryDate);
+  const status = (subscriptionStatus || "").toLowerCase();
+
+  if (status === "cancelled") {
+    return expiry > now;
+  }
+
+  return ["active", "authenticated", "pending"].includes(status) && expiry > now;
+};
+
+const getOrCreateRazorpayPlanId = async (selectedPlan) => {
+  const envPlanId = ENV_PLAN_ID_BY_PLAN[selectedPlan.id];
+  if (envPlanId && envPlanId.trim()) {
+    return envPlanId.trim();
+  }
+
+  const cachedPlanId = runtimePlanIdCache[selectedPlan.id];
+  if (cachedPlanId) {
+    return cachedPlanId;
+  }
+
+  const interval = PREMIUM_PLAN_INTERVAL_MONTHS[selectedPlan.id] || selectedPlan.months || 1;
+  const plan = await razorpay.plans.create({
+    period: "monthly",
+    interval,
+    item: {
+      name: `YouTube Premium ${selectedPlan.name}`,
+      amount: selectedPlan.priceInr * 100,
+      currency: "INR",
+      description: `Auto-renewing ${selectedPlan.name} premium plan`,
+    },
+    notes: {
+      planId: selectedPlan.id,
+      app: "youtube_clone",
+    },
+  });
+
+  runtimePlanIdCache[selectedPlan.id] = plan.id;
+  return plan.id;
+};
+
+const syncPremiumStatusFromRazorpay = async (user) => {
+  if (!isRazorpayConfigured() || !user?.premiumSubscriptionId) {
+    return user;
+  }
+
+  try {
+    const subscription = await razorpay.subscriptions.fetch(user.premiumSubscriptionId);
+    const status = subscription?.status || null;
+    const nextEnd = subscription?.current_end
+      ? new Date(subscription.current_end * 1000)
+      : user.premiumExpiryDate;
+
+    user.premiumSubscriptionStatus = status;
+    user.premiumExpiryDate = nextEnd || null;
+    user.isPremium = isPremiumAccessActive(status, nextEnd);
+    await user.save();
+  } catch (error) {
+    console.error("Error syncing premium subscription status:", error?.error || error?.message || error);
+  }
+
+  return user;
+};
 
 // DEV-ONLY: Set yourself as admin (use with caution)
 // POST /api/monetization/dev-set-admin?email=your@email.com&secret=your_seed_secret
@@ -196,7 +290,8 @@ const calculateRevenue = (cpm) => {
 monetization.post('/start-view', verifyToken, async (req, res) => {
   try {
     const { videoId } = req.body;
-    const viewerId = req.user._id;
+    const syncedUser = await syncPremiumStatusFromRazorpay(req.user);
+    const viewerId = syncedUser._id;
     const ipAddress = req.ip || req.connection.remoteAddress;
     const userAgent = req.headers['user-agent'];
 
@@ -220,7 +315,7 @@ monetization.post('/start-view', verifyToken, async (req, res) => {
     }
 
     // Check if user is premium (no ads for premium users)
-    if (req.user.isPremium && req.user.premiumExpiryDate > new Date()) {
+    if (syncedUser.isPremium && syncedUser.premiumExpiryDate > new Date()) {
       return res.status(200).json({ 
         success: true, 
         shouldShowAd: false,
@@ -279,7 +374,8 @@ monetization.post('/start-view', verifyToken, async (req, res) => {
 monetization.post('/record-ad-view', verifyToken, async (req, res) => {
   try {
     const { videoId, adCompleted = true } = req.body;
-    const viewerId = req.user._id;
+    const syncedUser = await syncPremiumStatusFromRazorpay(req.user);
+    const viewerId = syncedUser._id;
     const ipAddress = req.ip || req.connection.remoteAddress;
     const userAgent = req.headers['user-agent'];
 
@@ -299,7 +395,7 @@ monetization.post('/record-ad-view', verifyToken, async (req, res) => {
     }
 
     // Check if user is premium
-    if (req.user.isPremium && req.user.premiumExpiryDate > new Date()) {
+    if (syncedUser.isPremium && syncedUser.premiumExpiryDate > new Date()) {
       return res.status(400).json({ success: false, message: "Premium users don't see ads" });
     }
 
@@ -880,7 +976,7 @@ monetization.post('/create-premium-order', verifyToken, async (req, res) => {
     const options = {
       amount: selectedPlan.priceInr * 100,
       currency: 'INR',
-      receipt: `premium_${user._id}_${Date.now()}`,
+      receipt: createPremiumReceipt(user._id),
       notes: {
         userId: user._id.toString(),
         type: 'premium_subscription',
@@ -903,6 +999,68 @@ monetization.post('/create-premium-order', verifyToken, async (req, res) => {
   } catch (error) {
     console.error('Error creating premium order:', error);
     res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+/**
+ * Create Razorpay recurring subscription for premium membership
+ * POST /api/monetization/create-premium-subscription
+ */
+monetization.post('/create-premium-subscription', verifyToken, async (req, res) => {
+  try {
+    const { planId = DEFAULT_PREMIUM_PLAN_ID } = req.body || {};
+    const user = req.user;
+    const selectedPlan = getPremiumPlan(planId);
+
+    if (!selectedPlan) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid premium plan selected',
+      });
+    }
+
+    if (!isRazorpayConfigured()) {
+      return res.status(503).json({
+        success: false,
+        message: 'Payment system not configured. Please contact admin.',
+        needsSetup: true,
+      });
+    }
+
+    if (user.isPremium && user.premiumExpiryDate > new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Already a premium member',
+        expiryDate: user.premiumExpiryDate,
+      });
+    }
+
+    const planRef = createPremiumPlanReference(selectedPlan.id);
+    const razorpayPlanId = await getOrCreateRazorpayPlanId(selectedPlan);
+    const subscription = await razorpay.subscriptions.create({
+      plan_id: razorpayPlanId,
+      total_count: 120,
+      customer_notify: 1,
+      quantity: 1,
+      notes: {
+        userId: user._id.toString(),
+        type: 'premium_subscription',
+        planId: selectedPlan.id,
+        planRef,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      subscriptionId: subscription.id,
+      razorpayPlanId,
+      planId: selectedPlan.id,
+      planName: selectedPlan.name,
+      priceInr: selectedPlan.priceInr,
+    });
+  } catch (error) {
+    console.error('Error creating premium subscription:', error);
+    res.status(500).json({ success: false, message: error?.error?.description || error.message });
   }
 });
 
@@ -1010,19 +1168,143 @@ monetization.post('/verify-premium-payment', verifyToken, async (req, res) => {
 });
 
 /**
+ * Verify and activate recurring premium subscription
+ * POST /api/monetization/verify-premium-subscription
+ */
+monetization.post('/verify-premium-subscription', verifyToken, async (req, res) => {
+  try {
+    const {
+      razorpaySubscriptionId,
+      razorpayPaymentId,
+      razorpaySignature,
+      planId = DEFAULT_PREMIUM_PLAN_ID,
+    } = req.body || {};
+    const user = req.user;
+    const selectedPlan = getPremiumPlan(planId);
+
+    if (!selectedPlan) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid premium plan selected',
+      });
+    }
+
+    if (!razorpaySubscriptionId || !razorpayPaymentId || !razorpaySignature) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing payment verification details',
+      });
+    }
+
+    if (!isRazorpayConfigured()) {
+      return res.status(503).json({
+        success: false,
+        message: 'Payment system not configured. Please contact admin.',
+      });
+    }
+
+    const body = `${razorpayPaymentId}|${razorpaySubscriptionId}`;
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .update(body)
+      .digest('hex');
+
+    if (expectedSignature !== razorpaySignature) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid signature',
+      });
+    }
+
+    let subscription;
+    let payment;
+    try {
+      subscription = await razorpay.subscriptions.fetch(razorpaySubscriptionId);
+      payment = await razorpay.payments.fetch(razorpayPaymentId);
+
+      const expectedAmount = selectedPlan.priceInr * 100;
+      if (payment.amount !== expectedAmount) {
+        return res.status(400).json({
+          success: false,
+          message: 'Payment amount mismatch',
+        });
+      }
+
+      if (!["captured", "authorized"].includes(payment.status)) {
+        return res.status(400).json({
+          success: false,
+          message: `Payment not successful. Status: ${payment.status}`,
+        });
+      }
+    } catch (razorpayError) {
+      console.error('Razorpay API error:', razorpayError);
+      return res.status(400).json({
+        success: false,
+        message: 'Failed to verify payment with payment provider',
+      });
+    }
+
+    const subscriptionStart = subscription?.start_at
+      ? new Date(subscription.start_at * 1000)
+      : new Date();
+    const subscriptionEnd = subscription?.current_end
+      ? new Date(subscription.current_end * 1000)
+      : new Date(Date.now() + selectedPlan.months * 30 * 24 * 60 * 60 * 1000);
+    const subscriptionStatus = subscription?.status || "active";
+
+    user.isPremium = isPremiumAccessActive(subscriptionStatus, subscriptionEnd);
+    user.premiumExpiryDate = subscriptionEnd;
+    user.premiumSubscriptionId = razorpaySubscriptionId;
+    user.premiumPlanId = selectedPlan.id;
+    user.premiumSubscriptionStatus = subscriptionStatus;
+    await user.save();
+
+    const transaction = new Transaction({
+      creator_id: user._id,
+      amount: selectedPlan.priceInr,
+      type: 'premium_subscription',
+      status: 'completed',
+      subscription_details: {
+        subscriber_id: user._id,
+        subscription_start: subscriptionStart,
+        subscription_end: subscriptionEnd,
+        razorpay_subscription_id: razorpaySubscriptionId,
+        razorpay_payment_id: razorpayPaymentId,
+      },
+    });
+    await transaction.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Premium subscription activated',
+      premiumExpiryDate: subscriptionEnd,
+      subscriptionStatus,
+      planId: selectedPlan.id,
+      planName: selectedPlan.name,
+    });
+  } catch (error) {
+    console.error('Error verifying premium subscription:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+/**
  * Get premium status
  * GET /api/monetization/premium-status
  */
 monetization.get('/premium-status', verifyToken, async (req, res) => {
   try {
     const user = await userData.findById(req.user._id);
-
+    await syncPremiumStatusFromRazorpay(user);
     const isPremium = user.isPremium && user.premiumExpiryDate > new Date();
 
     res.status(200).json({
       success: true,
       isPremium,
       premiumExpiryDate: user.premiumExpiryDate,
+      premiumSubscriptionId: user.premiumSubscriptionId,
+      premiumPlanId: user.premiumPlanId,
+      premiumSubscriptionStatus: user.premiumSubscriptionStatus,
       PREMIUM_PRICE_INR: PREMIUM_PLANS.find((plan) => plan.id === DEFAULT_PREMIUM_PLAN_ID)?.priceInr || 199,
       plans: PREMIUM_PLANS,
     });

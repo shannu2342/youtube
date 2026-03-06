@@ -44,15 +44,31 @@ function Customization() {
   }, [menu]);
 
   useEffect(() => {
-    if (theme === false && window.location.href.includes("/studio/customize")) {
+    if (window.location.href.includes("/studio/customize")) {
       document.body.style.backgroundColor = "white";
-    } else if (
-      theme === true &&
-      window.location.href.includes("/studio/customize")
-    ) {
-      document.body.style.backgroundColor = "#282828";
     }
   }, [theme]);
+
+  useEffect(() => {
+    const previousBodyOverflowY = document.body.style.overflowY;
+    const previousBodyOverflowX = document.body.style.overflowX;
+    const previousHtmlOverflowY = document.documentElement.style.overflowY;
+    const previousHtmlOverflowX = document.documentElement.style.overflowX;
+
+    if (window.location.href.includes("/studio/customize")) {
+      document.body.style.overflowY = "hidden";
+      document.body.style.overflowX = "hidden";
+      document.documentElement.style.overflowY = "hidden";
+      document.documentElement.style.overflowX = "hidden";
+    }
+
+    return () => {
+      document.body.style.overflowY = previousBodyOverflowY || "hidden";
+      document.body.style.overflowX = previousBodyOverflowX || "";
+      document.documentElement.style.overflowY = previousHtmlOverflowY || "hidden";
+      document.documentElement.style.overflowX = previousHtmlOverflowX || "";
+    };
+  }, []);
 
   useEffect(() => {
     const handleClick = () => {

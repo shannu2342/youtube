@@ -6,6 +6,10 @@
   top: 100px;
   left: 310px;
   width: -webkit-fill-available;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 24px;
   animation: FADEINN 0.45s ease;
 }
 

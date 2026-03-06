@@ -4,8 +4,7 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import "../Css/navbar.css";
-import StudioLogo from "../img/studio.png";
-import StudioLogo2 from "../img/studio2.png";
+import AppLogo from "../img/vyx-logo.svg";
 import { useEffect, useState, useRef } from "react";
 import AccountPop2 from "./AccountPop2";
 import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
@@ -177,7 +176,7 @@ function Navbar2() {
           />
 
           <img
-            src={theme ? StudioLogo : StudioLogo2}
+            src={AppLogo}
             alt="logo"
             className="vyxLogo2"
             onClick={() => {

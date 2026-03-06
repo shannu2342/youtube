@@ -2,17 +2,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap");
 
 .channel-customize {
-  background-color: #282828;
-  height: max-content;
+  background-color: #ffffff;
+  color: #111111;
+  min-height: calc(100vh - 56px);
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+  overflow-x: hidden;
   animation: FADEINN 1s ease;
 }
 
 .channel-customize-section {
-  position: absolute;
+  position: relative;
   left: 270px;
-  top: 100px;
-  color: white;
+  margin-top: 100px;
+  color: #111111;
   width: -webkit-fill-available;
+  padding-bottom: 28px;
 }
 
 .customize-header,
@@ -48,7 +53,7 @@
   font-family: "Open Sans", sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #aaa;
+  color: #555;
 }
 
 .right-redirects {
@@ -117,7 +122,7 @@
 }
 
 .customize-data-section {
-  position: absolute;
+  position: relative;
 }
 
 .profile-update-section {
@@ -134,7 +139,7 @@
 
 .pic-div {
   width: fit-content;
-  background-color: #1f1f1f;
+  background-color: #f5f5f5;
   width: 290px;
   height: 160px;
   display: flex;
@@ -167,12 +172,12 @@
 .basic-link-desc {
   font-size: 13px;
   margin-top: 8px;
-  color: #aaa;
+  color: #444;
 }
 .pic-extra-content,
 .banner-desc {
   font-size: 13px;
-  color: #aaa;
+  color: #444;
 }
 
 .picture-section,
@@ -219,7 +224,7 @@
   border: 1px solid #aaaaaa89;
   height: 40px;
   border-radius: 3px;
-  color: white;
+  color: #111;
   padding: 5px;
   padding-left: 10px;
   padding-right: 10px;
@@ -233,7 +238,7 @@
   border: 1px solid #aaaaaa89;
   height: 30px;
   border-radius: 3px;
-  color: white;
+  color: #111;
   padding: 5px;
   padding-left: 10px;
   padding-right: 10px;
@@ -243,13 +248,13 @@
 
 .channel-name-inp2 {
   width: -webkit-fill-available;
-  background-color: #1f1f1f;
+  background-color: #f5f5f5;
   margin-top: 15px;
   outline: none;
   border: 1px solid #aaaaaa89;
   height: 40px;
   border-radius: 3px;
-  color: white;
+  color: #111;
   padding: 5px;
   padding-left: 10px;
   padding-right: 10px;
@@ -276,7 +281,7 @@
   outline: none;
   border: 1px solid #aaaaaa89;
   border-radius: 3px;
-  color: white;
+  color: #111;
   padding: 15px;
   font-size: 15px;
 }
@@ -400,7 +405,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: #111;
   z-index: 6;
   width: 78vw;
   height: 100vh;
@@ -436,7 +441,7 @@
   outline: none;
   border: none;
   width: -webkit-fill-available;
-  color: white;
+  color: #111;
   font-size: 15px;
   padding-left: 15px;
   padding-right: 15px;
@@ -444,7 +449,7 @@
 
 .studio-social-icons {
   cursor: pointer;
-  background-color: #1f1f1f;
+  background-color: #f5f5f5;
   padding: 8px;
   padding-left: 10px;
   padding-right: 10px;
@@ -468,7 +473,7 @@
 }
 
 .delete-social:hover {
-  color: white !important;
+  color: #111 !important;
 }
 
 .delete-social-light:hover {
@@ -479,7 +484,7 @@
   position: relative;
   top: 15px;
   width: fit-content;
-  background-color: #1f1f1f;
+  background-color: #f5f5f5;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -518,7 +523,7 @@
 }
 
 .addthis-icon:hover {
-  background-color: #323232;
+  background-color: #efefef;
 }
 
 .addthis-icon-light:hover {

@@ -26,6 +26,10 @@
   font-weight: 700;
 }
 
+.customize-header > p.text-light-mode {
+  color: #0f0f0f !important;
+}
+
 .redirectss {
   display: flex;
   align-items: center;

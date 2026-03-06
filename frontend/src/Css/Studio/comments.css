@@ -20,6 +20,10 @@
   width: -webkit-fill-available;
 }
 
+.channel-comments-top > p.text-light-mode {
+  color: #0f0f0f !important;
+}
+
 .vid-comments-top > p:nth-child(1) {
   color: white;
   font-family: "Open Sans", sans-serif;

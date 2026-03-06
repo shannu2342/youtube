@@ -125,7 +125,7 @@ function MonetizationDashboard() {
 
   return (
     <div className="dashboard-data" style={{ left: "310px" }}>
-      <h2 style={{ marginBottom: "20px", color: "#fff" }}>
+      <h2 style={{ marginBottom: "20px", color: "#0f0f0f" }}>
         <MonetizationOnIcon style={{ marginRight: "10px", color: "#4caf50" }} />
         Creator Monetization
       </h2>

@@ -73,6 +73,11 @@
   padding-left: 25px;
 }
 
+.main-section2.light-mode .panel > p,
+.main-section2.light-mode .your-channel {
+  color: #0f0f0f;
+}
+
 .second-panel,
 .third-panel {
   margin-top: 20px;

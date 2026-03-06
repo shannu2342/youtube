@@ -112,7 +112,16 @@ function MonetizationDashboard() {
 
   if (loading) {
     return (
-      <div className="dashboard-data" style={{ left: "310px" }}>
+      <div
+        className="dashboard-data"
+        style={{
+          left: "310px",
+          maxHeight: "calc(100vh - 120px)",
+          overflowY: "auto",
+          paddingRight: "12px",
+          paddingBottom: "24px",
+        }}
+      >
         <Skeleton height={30} width={250} />
         <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
           <Skeleton height={150} width={300} />
@@ -124,7 +133,16 @@ function MonetizationDashboard() {
   }
 
   return (
-    <div className="dashboard-data" style={{ left: "310px" }}>
+    <div
+      className="dashboard-data"
+      style={{
+        left: "310px",
+        maxHeight: "calc(100vh - 120px)",
+        overflowY: "auto",
+        paddingRight: "12px",
+        paddingBottom: "24px",
+      }}
+    >
       <h2 style={{ marginBottom: "20px", color: "#0f0f0f" }}>
         <MonetizationOnIcon style={{ marginRight: "10px", color: "#4caf50" }} />
         Creator Monetization

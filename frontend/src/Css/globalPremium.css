@@ -209,3 +209,45 @@ button:hover,
   background-color: rgba(13, 36, 83, 0.85) !important;
   color: #ffffff !important;
 }
+
+/* Ensure readability on premium white surfaces for Channel/Studio sections */
+.channel-top-content,
+.myvideos-section,
+.myuploaded-videos,
+.mypopular-videos,
+.uploadedvideos-sectionall,
+.sk-uploadedvideos-sectionall,
+.sk-uploadedvideos-sectionall2,
+.home-pagevideos,
+.channel-content-top > p:nth-child(1),
+.channel-comments-top > p:nth-child(1),
+.vid-comments-top > p:nth-child(1),
+.customize-header > p,
+.dashboard-top {
+  color: var(--pg-text) !important;
+}
+
+.channelname,
+.myvideo-title,
+.video-title2,
+.section-title,
+.channel-home1,
+.channel-videos1,
+.channel-playlists1,
+.channel-subscriptions1,
+.channel-about1,
+.channel-home2,
+.channel-videos2,
+.channel-playlists2,
+.channel-subscriptions2,
+.channel-about2 {
+  color: var(--pg-text) !important;
+}
+
+.channel-home1::before,
+.channel-videos1::before,
+.channel-playlists1::before,
+.channel-subscriptions1::before,
+.channel-about1::before {
+  background-color: var(--pg-text) !important;
+}

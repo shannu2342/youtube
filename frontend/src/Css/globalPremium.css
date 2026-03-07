@@ -251,3 +251,10 @@ button:hover,
 .channel-about1::before {
   background-color: var(--pg-text) !important;
 }
+
+/* Force readable text on white Studio/Channel surfaces */
+.studio-light :is(p, span, h1, h2, h3, h4, h5, h6, a, label, li, td, th, strong, small),
+.channel-main-content :is(p, span, h1, h2, h3, h4, h5, h6, a, label, li, td, th, strong, small),
+.channel-main-content-nocover :is(p, span, h1, h2, h3, h4, h5, h6, a, label, li, td, th, strong, small) {
+  color: #111111 !important;
+}

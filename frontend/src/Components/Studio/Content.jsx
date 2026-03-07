@@ -27,6 +27,7 @@ import { backendURL } from "../../config/backend";
 
 function Content() {
   const [userVideos, setUserVideos] = useState([]);
+  const [videosLoaded, setVideosLoaded] = useState(false);
   const [sortByDateAsc, setSortByDateAsc] = useState(true);
   const [changeSort, setChangeSort] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
@@ -152,10 +153,12 @@ function Content() {
           );
 
           const data = await response.json();
-          setUserVideos(data);
+          setUserVideos(Array.isArray(data) ? data : data || []);
         }
       } catch (error) {
-        // console.log(error.message);
+        setUserVideos([]);
+      } finally {
+        setVideosLoaded(true);
       }
     };
 
@@ -187,7 +190,7 @@ function Content() {
   };
 
   const sortedUserVideos =
-    userVideos &&
+    Array.isArray(userVideos) &&
     userVideos.length > 0 &&
     userVideos.sort((a, b) => {
       if (sortByDateAsc) {
@@ -196,6 +199,11 @@ function Content() {
         return new Date(b.uploaded_date) - new Date(a.uploaded_date);
       }
     });
+
+  const noVideosPosted =
+    videosLoaded &&
+    (userVideos?.message === "USER DOESN'T EXIST" ||
+      (Array.isArray(userVideos) && userVideos.length === 0));
 
   //POST REQUESTS
 
@@ -696,13 +704,13 @@ function Content() {
         <div
           className="novideo-available"
           style={
-            userVideos && userVideos.message === "USER DOESN'T EXIST"
-              ? { display: "flex" }
+            noVideosPosted
+              ? { display: "flex", left: menu ? "90px" : "270px" }
               : { display: "none" }
           }
         >
           <img src={noImage} alt="no-video" className="no-content-img" />
-          <p>No content available</p>
+          <p>No videos posted yet</p>
         </div>
       </div>
       <div

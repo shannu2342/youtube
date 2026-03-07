@@ -34,6 +34,22 @@ function LeftPanel2() {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [theme] = useState(false);
+  const collapsedHeadingTooltipProps = {
+    slotProps: {
+      tooltip: {
+        sx: {
+          color: "#2a7bff !important",
+        },
+      },
+    },
+    componentsProps: {
+      tooltip: {
+        sx: {
+          color: "#2a7bff !important",
+        },
+      },
+    },
+  };
 
   const User = useSelector((state) => state.user.user);
   const { user } = User;
@@ -425,6 +441,7 @@ function LeftPanel2() {
               TransitionComponent={Zoom}
               title="Dashboard"
               placement="bottom"
+              {...collapsedHeadingTooltipProps}
             >
               <DashboardIcon
                 className={
@@ -432,8 +449,7 @@ function LeftPanel2() {
                 }
                 fontSize="medium"
                 style={{
-                  color: "#A9A9A9",
-                  paddingLeft: "25px !important",
+                  color: "#2a7bff",
                   paddingTop: "16px",
                   paddingBottom: "16px",
                 }}
@@ -457,14 +473,15 @@ function LeftPanel2() {
               TransitionComponent={Zoom}
               title="Content"
               placement="bottom"
+              {...collapsedHeadingTooltipProps}
             >
               <VideoLibraryOutlinedIcon
-                className={
+                className={ 
                   StudioSection === "Content" ? "studio-icon2" : "studio-icon"
                 }
                 fontSize="medium"
                 style={{
-                  color: "#A9A9A9",
+                  color: "#2a7bff",
                   paddingTop: "16px",
                   paddingBottom: "16px",
                 }}
@@ -488,6 +505,7 @@ function LeftPanel2() {
               TransitionComponent={Zoom}
               title="Comments"
               placement="bottom"
+              {...collapsedHeadingTooltipProps}
             >
               <ChatOutlinedIcon
                 className={
@@ -495,7 +513,7 @@ function LeftPanel2() {
                 }
                 fontSize="medium"
                 style={{
-                  color: "#A9A9A9",
+                  color: "#2a7bff",
                   paddingTop: "16px",
                   paddingBottom: "16px",
                 }}
@@ -519,6 +537,7 @@ function LeftPanel2() {
               TransitionComponent={Zoom}
               title="Customization"
               placement="bottom"
+              {...collapsedHeadingTooltipProps}
             >
               <AutoFixHighOutlinedIcon
                 className={
@@ -528,7 +547,7 @@ function LeftPanel2() {
                 }
                 fontSize="medium"
                 style={{
-                  color: "#A9A9A9",
+                  color: "#2a7bff",
                   paddingTop: "16px",
                   paddingBottom: "16px",
                 }}
@@ -552,6 +571,7 @@ function LeftPanel2() {
               TransitionComponent={Zoom}
               title="Monetization"
               placement="bottom"
+              {...collapsedHeadingTooltipProps}
             >
               <span className="tooltip-ref-wrap">
                 <MdMonetizationOn
@@ -562,7 +582,7 @@ function LeftPanel2() {
                   }
                   fontSize="medium"
                   style={{
-                    color: "#A9A9A9",
+                    color: "#2a7bff",
                     paddingTop: "16px",
                     paddingBottom: "16px",
                   }}
@@ -645,6 +665,7 @@ function LeftPanel2() {
               TransitionComponent={Zoom}
               title="Dashboard"
               placement="bottom"
+              {...collapsedHeadingTooltipProps}
             >
               <DashboardIcon
                 className={
@@ -652,7 +673,7 @@ function LeftPanel2() {
                 }
                 fontSize="medium"
                 style={{
-                  color: "#A9A9A9",
+                  color: "#2a7bff",
                   paddingLeft: "25px !important",
                   paddingTop: "16px",
                   paddingBottom: "16px",
@@ -677,6 +698,7 @@ function LeftPanel2() {
               TransitionComponent={Zoom}
               title="Content"
               placement="bottom"
+              {...collapsedHeadingTooltipProps}
             >
               <VideoLibraryOutlinedIcon
                 className={
@@ -684,7 +706,7 @@ function LeftPanel2() {
                 }
                 fontSize="medium"
                 style={{
-                  color: "#A9A9A9",
+                  color: "#2a7bff",
                   paddingTop: "16px",
                   paddingBottom: "16px",
                 }}
@@ -708,6 +730,7 @@ function LeftPanel2() {
               TransitionComponent={Zoom}
               title="Comments"
               placement="bottom"
+              {...collapsedHeadingTooltipProps}
             >
               <ChatOutlinedIcon
                 className={
@@ -715,7 +738,7 @@ function LeftPanel2() {
                 }
                 fontSize="medium"
                 style={{
-                  color: "#A9A9A9",
+                  color: "#2a7bff",
                   paddingTop: "16px",
                   paddingBottom: "16px",
                 }}
@@ -739,6 +762,7 @@ function LeftPanel2() {
               TransitionComponent={Zoom}
               title="Customization"
               placement="bottom"
+              {...collapsedHeadingTooltipProps}
             >
               <AutoFixHighOutlinedIcon
                 className={
@@ -748,7 +772,7 @@ function LeftPanel2() {
                 }
                 fontSize="medium"
                 style={{
-                  color: "#A9A9A9",
+                  color: "#2a7bff",
                   paddingTop: "16px",
                   paddingBottom: "16px",
                 }}
@@ -772,6 +796,7 @@ function LeftPanel2() {
               TransitionComponent={Zoom}
               title="Monetization"
               placement="bottom"
+              {...collapsedHeadingTooltipProps}
             >
               <span className="tooltip-ref-wrap">
                 <MdMonetizationOn
@@ -782,7 +807,7 @@ function LeftPanel2() {
                   }
                   fontSize="medium"
                   style={{
-                    color: "#A9A9A9",
+                    color: "#2a7bff",
                     paddingTop: "16px",
                     paddingBottom: "16px",
                   }}
@@ -813,6 +838,7 @@ function LeftPanel2() {
             TransitionComponent={Zoom}
             title="Dashboard"
             placement="bottom"
+            {...collapsedHeadingTooltipProps}
           >
             <span className="tooltip-ref-wrap">
               <MdDashboard
@@ -823,7 +849,7 @@ function LeftPanel2() {
                 }
                 fontSize="26px"
                 style={{
-                  color: "#A9A9A9",
+                  color: "#2a7bff",
                 }}
               />
             </span>
@@ -840,6 +866,7 @@ function LeftPanel2() {
             TransitionComponent={Zoom}
             title="Content"
             placement="bottom"
+            {...collapsedHeadingTooltipProps}
           >
             <span className="tooltip-ref-wrap">
               <MdOutlineVideoLibrary
@@ -850,7 +877,7 @@ function LeftPanel2() {
                 }
                 fontSize="26px"
                 style={{
-                  color: "#A9A9A9",
+                  color: "#2a7bff",
                 }}
               />
             </span>
@@ -867,6 +894,7 @@ function LeftPanel2() {
             TransitionComponent={Zoom}
             title="Comments"
             placement="bottom"
+            {...collapsedHeadingTooltipProps}
           >
             <span className="tooltip-ref-wrap">
               <BiCommentDetail
@@ -877,7 +905,7 @@ function LeftPanel2() {
                 }
                 fontSize="26px"
                 style={{
-                  color: "#A9A9A9",
+                  color: "#2a7bff",
                 }}
               />
             </span>
@@ -894,6 +922,7 @@ function LeftPanel2() {
             TransitionComponent={Zoom}
             title="Customization"
             placement="bottom"
+            {...collapsedHeadingTooltipProps}
           >
             <span className="tooltip-ref-wrap">
               <MdOutlineAutoFixHigh
@@ -904,7 +933,7 @@ function LeftPanel2() {
                 }
                 fontSize="26px"
                 style={{
-                  color: "#A9A9A9",
+                  color: "#2a7bff",
                 }}
               />
             </span>
@@ -921,6 +950,7 @@ function LeftPanel2() {
             TransitionComponent={Zoom}
             title="Monetization"
             placement="bottom"
+            {...collapsedHeadingTooltipProps}
           >
             <span className="tooltip-ref-wrap">
               <MdMonetizationOn
@@ -931,7 +961,7 @@ function LeftPanel2() {
                 }
                 fontSize="26px"
                 style={{
-                  color: "#A9A9A9",
+                  color: "#2a7bff",
                 }}
               />
             </span>

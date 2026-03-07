@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import "../../Css/Studio/dashboard.css";
+import LeftPanel2 from "../LeftPanel2";
+import Navbar2 from "../Navbar2";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import {
@@ -13,7 +15,6 @@ import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import PictureInPictureAltIcon from "@mui/icons-material/PictureInPictureAlt";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Skeleton from "react-loading-skeleton";
 
 function MonetizationDashboard() {
@@ -30,6 +31,10 @@ function MonetizationDashboard() {
   });
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [bankLoading, setBankLoading] = useState(false);
+  const [menu, setmenu] = useState(() => {
+    const menu = localStorage.getItem("studioMenuClicked");
+    return menu ? JSON.parse(menu) : false;
+  });
 
   const User = useSelector((state) => state.user.user);
   const { user } = User;
@@ -37,6 +42,27 @@ function MonetizationDashboard() {
   useEffect(() => {
     fetchDashboard();
   }, []);
+
+  useEffect(() => {
+    const handleMenuButtonClick = () => {
+      setmenu((prevMenuClicked) => !prevMenuClicked);
+    };
+
+    const menuButton = document.querySelector(".menu2");
+    if (menuButton) {
+      menuButton.addEventListener("click", handleMenuButtonClick);
+    }
+
+    return () => {
+      if (menuButton) {
+        menuButton.removeEventListener("click", handleMenuButtonClick);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("studioMenuClicked", JSON.stringify(menu));
+  }, [menu]);
 
   const fetchDashboard = async () => {
     try {
@@ -112,37 +138,44 @@ function MonetizationDashboard() {
 
   if (loading) {
     return (
+      <>
+        <Navbar2 />
+        <LeftPanel2 />
+        <div
+          className="dashboard-data"
+          style={{
+            left: menu ? "125px" : "310px",
+            maxHeight: "calc(100vh - 120px)",
+            overflowY: "auto",
+            paddingRight: "12px",
+            paddingBottom: "24px",
+          }}
+        >
+          <Skeleton height={30} width={250} />
+          <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
+            <Skeleton height={150} width={300} />
+            <Skeleton height={150} width={300} />
+            <Skeleton height={150} width={300} />
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Navbar2 />
+      <LeftPanel2 />
       <div
         className="dashboard-data"
         style={{
-          left: "310px",
+          left: menu ? "125px" : "310px",
           maxHeight: "calc(100vh - 120px)",
           overflowY: "auto",
           paddingRight: "12px",
           paddingBottom: "24px",
         }}
       >
-        <Skeleton height={30} width={250} />
-        <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
-          <Skeleton height={150} width={300} />
-          <Skeleton height={150} width={300} />
-          <Skeleton height={150} width={300} />
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className="dashboard-data"
-      style={{
-        left: "310px",
-        maxHeight: "calc(100vh - 120px)",
-        overflowY: "auto",
-        paddingRight: "12px",
-        paddingBottom: "24px",
-      }}
-    >
       <h2 style={{ marginBottom: "20px", color: "#0f0f0f" }}>
         <MonetizationOnIcon style={{ marginRight: "10px", color: "#4caf50" }} />
         Creator Monetization
@@ -612,7 +645,8 @@ function MonetizationDashboard() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 

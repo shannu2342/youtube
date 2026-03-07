@@ -121,6 +121,9 @@ function Dashboard() {
     myVideos.length > 0 &&
     myVideos.sort((a, b) => b.views - a.views);
 
+  const noVideosPosted = Array.isArray(myVideos) && myVideos.length === 0;
+  const safeChannelSubs = Number(channelSubs) || 0;
+
   const indexInSorted =
     sortedVideos &&
     sortedVideos.findIndex((video) => video._id === myVideos[0]._id);
@@ -170,7 +173,10 @@ function Dashboard() {
     );
   }
 
-  if (myVideos.message === "USER DOESN'T EXIST" && channelSubs === 0) {
+  if (
+    (myVideos.message === "USER DOESN'T EXIST" || noVideosPosted) &&
+    safeChannelSubs === 0
+  ) {
     return (
       <>
         <div className="studio-dashboard-section">
@@ -206,6 +212,9 @@ function Dashboard() {
                       />
                       <p className={theme ? "" : "text-light-mode2"}>
                         Want to see metrics on your recent video?
+                      </p>
+                      <p className={theme ? "" : "text-light-mode2"}>
+                        No videos posted yet.
                       </p>
                       <p className={theme ? "" : "text-light-mode2"}>
                         Upload and publish a video to get started.
@@ -254,7 +263,10 @@ function Dashboard() {
         </div>
       </>
     );
-  } else if (myVideos.message === "USER DOESN'T EXIST" && channelSubs > 0) {
+  } else if (
+    (myVideos.message === "USER DOESN'T EXIST" || noVideosPosted) &&
+    safeChannelSubs > 0
+  ) {
     return (
       <div className="studio-dashboard-section">
         <div
@@ -287,6 +299,9 @@ function Dashboard() {
                       Want to see metrics on your recent video?
                     </p>
                     <p className={theme ? "" : "text-light-mode2"}>
+                      No videos posted yet.
+                    </p>
+                    <p className={theme ? "" : "text-light-mode2"}>
                       Upload and publish a video to get started.
                     </p>
                     <button
@@ -313,7 +328,7 @@ function Dashboard() {
                 <p>Channel analytics</p>
                 <div className="subscriber-analytics">
                   <p>Current subscribers</p>
-                  <p>{channelSubs && channelSubs}</p>
+                  <p>{safeChannelSubs}</p>
                 </div>
                 <div className="channel-summary" style={{ border: "none" }}>
                   <p>Summary</p>

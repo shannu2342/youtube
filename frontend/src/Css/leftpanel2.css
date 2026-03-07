@@ -75,7 +75,7 @@
 
 .main-section2.light-mode .panel > p,
 .main-section2.light-mode .your-channel {
-  color: #0f0f0f;
+  color: #2a7bff;
 }
 
 .second-panel,
@@ -161,6 +161,56 @@
 
 .tooltip-ref-wrap {
   display: inline-flex;
+}
+
+/* Collapsed studio sidebar: keep icons visible + blue */
+.main-section2.short-left .panel,
+.main-section2.short-left2 .panel {
+  justify-content: center;
+}
+
+.main-section2.short-left .panel svg,
+.main-section2.short-left2 .panel svg,
+.studio-horizontal-menu svg {
+  color: #2a7bff !important;
+  fill: currentColor !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.main-section2.short-left .panel .studio-icon,
+.main-section2.short-left .panel .studio-icon2,
+.main-section2.short-left2 .panel .studio-icon,
+.main-section2.short-left2 .panel .studio-icon2 {
+  padding-left: 0 !important;
+}
+
+/* Collapsed sidebar blue background theme */
+.main-section2.short-left,
+.main-section2.short-left2 {
+  background-color: #eaf3ff !important;
+  border-right: 1px solid #bfd7ff !important;
+}
+
+.main-section2.short-left .panel,
+.main-section2.short-left2 .panel {
+  background-color: #eaf3ff !important;
+}
+
+.main-section2.short-left .panel:hover,
+.main-section2.short-left2 .panel:hover {
+  background-color: #d6e8ff !important;
+}
+
+.main-section2.short-left .studio-active-light,
+.main-section2.short-left2 .studio-active-light {
+  background-color: #c9e0ff !important;
+  border-left-color: #2a7bff !important;
+}
+
+.studio-horizontal-menu {
+  background-color: #eaf3ff !important;
+  border-top: 1px solid #bfd7ff !important;
 }
 
 /* MEDIA QUERIES */
